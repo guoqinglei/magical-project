@@ -1,10 +1,12 @@
 CC       = g++
-CFLAGS   = -Wall -Wextra -fopenmp
+CFLAGS   = -Wall -Wextra -fopenmp -O3
+# -lefence -Dsamer_debug
 
-FILES_H  = types.h paths.h
-FILES_CC = types.cpp paths.cpp johnson_tsplib_test.cpp
+FILES_H  = types.h paths.h mst.h
+FILES_CC = types.cpp paths.cpp mst.cpp magical_config.cpp mst_test.cpp
+FILES_TINYXML = tinyxml_src/tinyxml.cpp tinyxml_src/tinyxmlparser.cpp tinyxml_src/tinyxmlerror.cpp tinyxml_src/tinystr.cpp
 
-BINARY   = paths
+BINARY   = magical_test
 
 all: clean compile
 
@@ -13,7 +15,7 @@ clean:
 	rm -f $(BINARY);
 
 compile:
-	$(CC) $(CFLAGS) $(FILES_CC) -o $(BINARY)
+	$(CC) $(CFLAGS) $(FILES_TINYXML) $(FILES_CC) -o $(BINARY)
 
 run:
 	./$(BINARY)

@@ -122,7 +122,7 @@ int main(int argc, char** argv)
 {
     if (argc < 2)
     {
-        cout << "usage: ./paths [tsplib_file]" << endl;
+        cout << "usage: " << argv[0] << " [tsplib_file]" << endl;
         return 1;
     }
     

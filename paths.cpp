@@ -3,6 +3,7 @@
 #include <cfloat>  // for DBL_MAX
 #include <omp.h>
 #include <iostream>
+#include "magical_config.h"
 //#include <sched.h>   // for linux 'sched_getcpu()' function
 
 /*
@@ -344,10 +345,14 @@ bool bellman_ford(AdjacencyList<> *graph, unsigned long source, double dist[], s
 bool johnson(AdjacencyList<> *graph, double **dist, std::vector<unsigned long> **paths)
 {
     // openmp setup
-    omp_set_num_threads(omp_get_num_procs());
-    omp_set_dynamic(0);   // disables dynamic adjustment of the number of threads available
-    //std::cout << "processor count: " << omp_get_num_procs() << std::endl;
-
+    if ( !magical_config::load_settings("johnson", graph->get_vertex_count()) )
+    {
+        std::cout << "Could not load settings from magical_config."
+            << "Using default values." << endl;
+        
+        omp_set_num_threads(omp_get_num_procs());
+    }
+    
     /* "producing nonnegative weights (while preserving shortest paths) by
      * reweighting" (see Cormen et al. 2001): insert artificial vertex 's' in
      * the graph, and 0-weight edges from 's' to every other vertex
@@ -407,7 +412,7 @@ bool johnson(AdjacencyList<> *graph, double **dist, std::vector<unsigned long> *
         /* computes shortest paths for each pair of vertices (all-pairs) by
          * calling Dijkstra's algorithm from each vertex in the original graph
          */
-        #pragma omp parallel for default(none) shared(graph, old_num_vertices) schedule(static)
+        #pragma omp parallel for default(none) shared(graph, old_num_vertices, dist, paths, h) schedule(static)
         for (long u = 1; u <= (signed) old_num_vertices; ++u)
         {
             double d[old_num_vertices+1];
@@ -424,12 +429,12 @@ bool johnson(AdjacencyList<> *graph, double **dist, std::vector<unsigned long> *
 //            std::cout << "thread #" << omp_get_thread_num() << " (core #" //<< sched_getcpu()
 //                << ") finished dijkstra execution from vertex #" << u << std::endl << std::flush;
 
-            // real path weight, using arc (u,v): w = w - h[u] + h[v
-//            for (unsigned long v = 1; v<=old_num_vertices; ++v)
-//            {
-//                dist[u][v] = d[v] - h[u] + h[v];
-//                paths[u][v].assign( p[v].begin(), p[v].end() );
-//            }
+            // real path weight, using arc (u,v): w = w - h[u] + h[v]
+            for (unsigned long v = 1; v<=old_num_vertices; ++v)
+            {
+                dist[u][v] = d[v] - h[u] + h[v];
+                paths[u][v].assign( p[v].begin(), p[v].end() );
+            }
 
             //#pragma omp critical
             //std::cout << paths[u][1][0] << std::endl;
