@@ -17,6 +17,8 @@ bool Edge::has_next() const { return (link == 0); }
 
 Vertex* Edge::get_successor() const { return successor; }
 
+Vertex* Edge::get_origin() const { return origin; }
+
 double Edge::get_weight() const { return weight; }
 
 void Edge::set_weight(double w) { weight = w; }
@@ -51,6 +53,7 @@ void Vertex::addEdge(Vertex *v, double w)
     adjacencies = e;
     outdegree++;
     v->indegree++;
+    e->origin = this;
 }
 
 Edge* Vertex::isEdge(Vertex *v) const
