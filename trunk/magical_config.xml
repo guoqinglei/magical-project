@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+
+<!-- magical library configuration: should allow adaptive parallel settings to
+ 	specific combinations of algorithm, instance and platform. -->
+
+<magical-config>
+	
+	<johnson_shortest_paths>
+		<default threads="#cores"/>
+		<input max_vertices="300" threads="1"/>
+		<input min_vertices="301" max_vertices="701" threads="2"/>
+		<input min_vertices="701" threads="#cores"/>
+	</johnson_shortest_paths>
+	
+	<boruvka_mst>
+		<default threads="#cores"/>
+		<input min_vertices="0" max_vertices="500" threads="#cores"/>
+	</boruvka_mst>
+	
+	<hierholzer_eulerian_circuit>
+		<default threads="#cores"/>
+		<input max_vertices="800" threads="1"/>
+	</hierholzer_eulerian_circuit>
+	
+	<!-- about default values: -->
+	<!-- skipping a setting defaults thread number to cpu_cores -->
+	<!-- skipping the min_vertices (resp. max_vertices) attribute in a 'input'
+		element defaults to '1' (resp. 'ULONG_MAX') -->
+	
+	<!-- setting overlapping intervals in 'input' entries uses the first one -->
+</magical-config>
