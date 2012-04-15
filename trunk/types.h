@@ -30,10 +30,12 @@ public:
     // structure access (get/set)
     virtual bool has_next() const;
     virtual Vertex* get_successor() const;
+    virtual Vertex* get_origin() const;
     virtual double get_weight() const;
     virtual void set_weight(double);
 
 private:
+    Vertex* origin;
     Vertex *successor;
     Edge *link;
     double weight;
